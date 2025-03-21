@@ -8,12 +8,14 @@ public interface ILogisticsClient
 
 public record TrackAndTrace(string Value);
 
-public class LogisticsClientStub(ILogger<LogisticsClientStub> logger) : ILogisticsClient
+public class LogisticsClientStub(ILogger<LogisticsClientStub>? logger) : ILogisticsClient
 {
+    public static readonly LogisticsClientStub Instance = new(null);
+    
     public Task<TrackAndTrace> ShipProducts(Guid customerId, IEnumerable<Guid> productIds)
         => Task.Delay(ClientSettings.Delay).ContinueWith(_ =>
             {
-                logger.LogInformation("LOGISTICS_SERVER: Products shipped");
+                logger?.LogInformation("LOGISTICS_SERVER: Products shipped");
                 return new TrackAndTrace(Guid.NewGuid().ToString());
             }
         );
@@ -21,7 +23,7 @@ public class LogisticsClientStub(ILogger<LogisticsClientStub> logger) : ILogisti
     public Task CancelShipment(TrackAndTrace trackAndTrace)
         => Task.Delay(ClientSettings.Delay).ContinueWith(_ =>
             {
-                logger.LogInformation("LOGISTICS_SERVER: Products shipment cancelled");
+                logger?.LogInformation("LOGISTICS_SERVER: Products shipment cancelled");
                 return new TrackAndTrace(Guid.NewGuid().ToString());
             }
         );
