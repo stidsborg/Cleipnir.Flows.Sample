@@ -12,9 +12,9 @@ public class OrderFlow(
 {
     public override async Task Run(Order order)
     {
-        var transactionId = await Capture(Guid.NewGuid);
+        var transactionId = await Capture("TransactionId", Guid.NewGuid);
         
-        await paymentProviderClient.Reserve(order.CustomerId, transactionId, order.TotalPrice);
+        await paymentProviderClient.Reserve(transactionId, order.CustomerId, order.TotalPrice);
 
         var trackAndTrace = await Capture(
             () => logisticsClient.ShipProducts(order.CustomerId, order.ProductIds),
